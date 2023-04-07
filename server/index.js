@@ -1,16 +1,25 @@
-const port = 3002
-const express = require('express')
+const express = require("express");
+const app = express();
+app.use(express.json());
+const mongoose = require("mongoose");
+const port = 3002;
+const db = "imoveisdb";
+const cloud = `mongodb+srv://usuario_teste:5QzyH5D7BAeZnwDM@cluster0.t6zgnjs.mongodb.net/${db}`;
 
-const app = express()
+const Imoveis = require("./models/imoveis");
 
-app.get('/', (req, res)=>{
-  res.send(`<h1>Hello world!, this is a ${req.method} request</h1>`)
-})
+app.post("/create", async (req, res) => {
+  const { tipo, titulo, descricao, preco, quartos, pet, vagas, localizacao } =
+    req.body;
 
-app.post('/', (req, res)=>{
-  res.send('<h1>Respondendo uma requisição POST!</h1>')
-})
+  const imovel = new Imoveis({ tipo, titulo, descricao, preco, quartos, pet, vagas, localizacao });
+  await imovel.save();
 
-app.listen(port, ()=>{
-  console.log('Iniciando servidor express')
+  res.json(imovel);
 });
+
+app.listen(port, () => console.log(`Servidor no http://localhost:${port}/`));
+mongoose
+  .connect(cloud)
+  .then(() => console.log("Conectado ao mongo"))
+  .catch((erro) => console.error(erro));
