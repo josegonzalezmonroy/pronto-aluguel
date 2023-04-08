@@ -24,4 +24,19 @@ async function listaDeImoveis(req, res) {
   return res.status(200).json(lista);
 }
 
-module.exports = { novoImovel, listaDeImoveis };
+async function deleteImovel(req, res) {
+  const { id } = req.params;
+
+  try {
+    const excluir = await Imoveis.findByIdAndDelete(id);
+    excluir
+      ? res.json(`id: ${id} removido`)
+      : res.status(404).json(`id: ${id} nao encontrado`);
+  } catch (erro) {
+    console.error(erro);
+    res.status(400).json("Formato de id nao valido");
+  }
+}
+
+module.exports = { novoImovel, listaDeImoveis, deleteImovel };
+ 
