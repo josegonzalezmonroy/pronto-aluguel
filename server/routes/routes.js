@@ -5,6 +5,7 @@ const imoveis = require('../controllers/imoveisController')
 router.get('/', imoveis.listaDeImoveis)
 router.post('/create', imoveis.novoImovel)
 router.delete('/imoveis/:id', imoveis.deleteImovel)
-router.patch('/edit/:id', imoveis.editarImovel) 
+router.patch('/edit/:id', imoveis.editarImovel)
+router.get('/imoveis/:id', imoveis.imovelPorId) 
 
 module.exports = router

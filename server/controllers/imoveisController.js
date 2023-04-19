@@ -16,12 +16,25 @@ async function novoImovel(req, res) {
   });
   await imovel.save();
 
-  res.json(imovel);
+  res.status(201).json(imovel);
 }
 
 async function listaDeImoveis(req, res) {
   const lista = await Imoveis.find({});
   return res.status(200).json(lista);
+}
+
+async function imovelPorId(req, res) {
+  const { id } = req.params;
+  try {
+    const imovel = await Imoveis.findById(id);  
+    imovel
+      ? res.status(302).json(imovel) 
+      : res.status(404).json("Id nao encontrado");
+  } catch (e) { 
+    console.error(e)
+    res.status(400).json('Id não valido')
+  }
 }
 
 async function deleteImovel(req, res) {
@@ -42,26 +55,31 @@ async function editarImovel(req, res) {
   const { id } = req.params;
   const { tipo, titulo, descricao, preco, quartos, pet, vagas, localizacao } =
     req.body;
-try {
-  const imovel = await Imoveis.findById(id);
-  imovel
-    ? (await imovel.updateOne({
-        tipo,
-        titulo,
-        descricao,
-        preco,
-        quartos,
-        pet,
-        vagas,
-        localizacao,
-      }),
-      res.status(202).json("Modificado com sucesso"))
-    : res.status(404).json("Erro");
-
-} catch (err) {
-     console.error(err)
-        return res.status(400).json("Erro")
+  try {
+    const imovel = await Imoveis.findById(id);
+    imovel
+      ? (await imovel.updateOne({
+          tipo,
+          titulo,
+          descricao,
+          preco,
+          quartos,
+          pet,
+          vagas,
+          localizacao,
+        }),
+        res.status(202).json("Modificado com sucesso"))
+      : res.status(404).json("Erro");
+  } catch (err) {
+    console.error(err);
+    return res.status(400).json("Erro");
+  }
 }
-}
 
-module.exports = { novoImovel, listaDeImoveis, deleteImovel, editarImovel };
+module.exports = {
+  novoImovel,
+  listaDeImoveis,
+  deleteImovel,
+  editarImovel,
+  imovelPorId,
+};
